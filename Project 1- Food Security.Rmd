@@ -1,6 +1,6 @@
 ---
 title: 'Project 1: Food Security'
-author: "Caroline Langenkamp"
+author: "Caroline Langenkamp and Kaia Mills-Lee (the cooler one!)"
 date: "2022-09-17"
 output:
   html_document:
