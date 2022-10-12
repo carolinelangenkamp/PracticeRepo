@@ -1,0 +1,92 @@
+---
+title: 'Project 1: Food Security'
+author: "Caroline Langenkamp"
+date: "2022-09-17"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.height=5, fig.width=6, warning=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff=60)) 
+library(ggplot2)
+foodsecurity <- read.csv('foodsecurity.csv')
+foodsecurity <- foodsecurity[foodsecurity$State=="Mississippi" | foodsecurity$State=="California",]
+fs_ggplot <- ggplot(foodsecurity)
+```
+
+# **Introduction**
+This data set pulls information from the United States Department of Agriculture’s Economic Research Service (USDAERS) about Food Security by County across all 50 states (and the District of Columbia). Although they provide data from 50 states, I decided to focus my research on 2 specific states: Mississippi and California. I chose these two states because of their varying size, location and average socioeconomic status. The USDAERS gathered this data through National Food Security surveys conducted as part of the Current Population Survey (CPS). In this data set, the information is divided into groups based on how far each household lives from a supermarket, including 1/2 mile, 1 mile, 10 miles and 20 miles. It also measures those 4 groups using the following variables: total population, state, vehicle access beyond a certain distance from a supermarket, children population beyond a certain distance from a supermarket, low income population beyond a certain distance from a supermarket, population beyond a certain distance from a supermarket and senior citizen population beyond a certain distance from a supermarket. The dataset also looks at the population living in group quarters and the total number of occupied housing units for each county. My outcome, or indicator, variable is vehicle access when looking at housing units more than 1/2 mile from a supermarket. My predictor variables are the proportion of children in a household, proportion of senior citizens in a household and the state.
+
+<center>
+
+![](foodsecurity.jpg){width=50%}
+
+</center>
+
+# **Univariate Distribution of Outcome Variable**
+```{r echo=FALSE}
+foodsecurity$housing <- foodsecurity$Vehicle.Access.1.2.Mile / foodsecurity$Housing.Data.Total.Housing.Unit
+
+ggplot(foodsecurity, aes(x=housing)) +  geom_histogram(col='black', fill='lightgreen', bins = 15) + xlab('Proportion of Housing Units without Vehicle Access beyond 1/2 mile') + ylab('Frequency') + ggtitle('Housing Units without Vehicle Access \n beyond 1/2 mile from a supermarket') + theme_classic()
+```
+
+
+\ This graph shows the distribution of the proportion of Housing Units without vehicle access beyond 1/2 mile from a supermarket. Because the data is positively skewed to the right, we look for the five number summary including the minimum, maximum, median and quartiles The median for the proportion is `r round(fivenum(foodsecurity$housing)[3],2)`. The first quartile of this data is `r round(fivenum(foodsecurity$housing)[2],2)` and the third quartile is `r round(fivenum(foodsecurity$housing)[4],2)`. The minimum was `r round(fivenum(foodsecurity$housing)[1],2)` and the maximum is `r round(fivenum(foodsecurity$housing)[5],2)`. The standard deviation for the proportion of Housing Units without vehicle access beyond 1/2 mile from the supermarket is `r round(sd(foodsecurity$housing),2)`. This graph shows that a large majority of the population's studied do have vehicle access, but there is still part of the population that does not.
+
+# **Predictor Variable Relationships**
+## Proportion of Children in a household
+
+
+
+```{r echo=FALSE}
+foodsecurity$children <- foodsecurity$Low.Access.Numbers.Children.1.2.Mile / foodsecurity$Population
+ggplot(foodsecurity, aes(x=children, y=housing)) +  geom_point(col='forestgreen', fill='maroon') + xlab('Proportion of Children Population') + ylab('Proportion of families without Vehicle Access') + ggtitle('Relationship between Vehicle Access and Number of Children') + theme_classic()
+```
+
+
+\ This graph shows the relationship between proportion of children in a household and vehicle access in that same household. We can see that there is a correlation coefficient of `r round(cor(foodsecurity$children, foodsecurity$housing, use = "complete.obs"), 2) `, so we can say that the data is positively correlated, almost very strongly. 
+
+## Proportion of Senior Citizens in a household
+
+```{r echo=FALSE}
+foodsecurity$seniors <- foodsecurity$Low.Access.Numbers.Seniors.1.2.Mile / foodsecurity$Population
+ggplot(foodsecurity, aes(x=seniors, y=housing)) +  geom_point(col='aquamarine4', fill='maroon') + xlab('Proportion of Senior Citizen Population') + ylab('Proportion of families without Vehicle Access') + ggtitle('Relationship between Vehicle Access \n and Number of Senior Citizens') + theme_classic()
+```
+
+\ This graph shows the distribution of the proportion of senior citizens in a household and vehicle access in that same household. From this graph, we can see there is a correlation coefficient of `r round(cor(foodsecurity$senior, foodsecurity$housing, use = "complete.obs"), 2) `. So, we can say that these data sets are weakly positively correlated.
+
+## State: California or Mississippi
+```{r echo=FALSE}
+ggplot(foodsecurity, aes(x=State, y=housing, fill=State)) + geom_boxplot()+ xlab('State') + ylab('Proportion of Families without Vehicle Access') + ggtitle('Proportion of Families without Vehicle Access by State')
+```
+
+
+\ This graph shows the relationship between the state a household is in (Mississippi or California) and the vehicle access in each household. For California, we look at the median because the data is positively skewed to the right. The median for the proportion of families without vehicle access is `r round(fivenum(foodsecurity$housing[foodsecurity$State=="California"])[3],2)`. The first quartile of this data is `r round(fivenum(foodsecurity$housing[foodsecurity$State=="California"])[2],2)` and the third quartile is `r round(fivenum(foodsecurity$housing[foodsecurity$State=="California"])[4],2)`. The minimum was `r round(fivenum(foodsecurity$housing[foodsecurity$State=="California"])[1],2)` and the maximum is `r round(fivenum(foodsecurity$housing[foodsecurity$State=="California"])[5],2)`. The standard deviation for the proportion of Housing Units in California without vehicle access beyond 1/2 mile from the supermarket is `r round(sd(foodsecurity$housing[foodsecurity$State=="California"]),2)`. 
+  
+We are going to look at the same data for Mississippi. The median for the proportion of families without vehicle access is `r round(fivenum(foodsecurity$housing[foodsecurity$State=="Mississippi"])[3],2)`. The first quartile of this data is `r round(fivenum(foodsecurity$housing[foodsecurity$State=="Mississippi"])[2],2)` and the third quartile is `r round(fivenum(foodsecurity$housing[foodsecurity$State=="Mississippi"])[4],2)`. The minimum was `r round(fivenum(foodsecurity$housing[foodsecurity$State=="Mississippi"])[1],2)` and the maximum is `r round(fivenum(foodsecurity$housing[foodsecurity$State=="Mississippi"])[5],2)`. The standard deviation for the proportion of Housing Units in Mississippi without vehicle access beyond 1/2 mile from the supermarket is `r round(sd(foodsecurity$housing[foodsecurity$State=="Mississippi"]),2)`.
+
+
+# **Question 4: Conclusion**
+## Current Findings
+From the first predictor variable, the main conclusion we reached is that there is a positively correlated relationship between the proportion of households with vehicle access and the proportion of children in a household. Essentially, this means that as the number of children "increases" in a household, the likelihood of having access to a vehicle decreases. From the second question, we see very similar results. As the number of senior citizens in a certain household increases, the proportion of people with vehicle access decreases. However, there is not as strong of a correlation in this distribution than there was in the previous one. The third question was a little different. It measured the relationship between state and proportion of vehicle access. Through our graph, we found that California had a much lower median proportion of households without vehicle access than Mississippi.
+
+## Future Research
+I chose to focus on just California and Mississippi for these distributions, but I think it would be very interesting to look at different states and compare their rates of households without vehicle access. I mentioned that I chose these two states because of their large disparities in average socioeconomic status, size and location, but I think it would be interesting to compare states that are more similar in some of these ways too. There is also definitely room to go into more research on the relationship between the number of children in a household and vehicle access in that household. Along with that, more research could also be done on the senior citizen relationship, although I personally find the first more interesting. Below are the sources I used to help me with my research and project.
+
+
+## References
+[Food Access CSV](https://think.cs.vt.edu/corgis/csv/food_access/)
+
+
+[Food Security Picture](https://voicesforhealthykids.org/impact/success-stories/increasing-access-healthy-foods-austin-tx)
+
+
+
+
+
+
+
